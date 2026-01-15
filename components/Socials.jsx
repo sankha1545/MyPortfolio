@@ -1,50 +1,28 @@
 import Link from "next/link";
 
 import {
-  RiYoutubeLine,
-  RiInstagramLine,
-  RiFacebookLine,
-  RiDribbbleLine,
+
   RiGithubLine,
-  RiPinterestLine,
+  RiLinkedinBoxLine,
 } from "react-icons/ri";
 
 export const socialData = [
-  {
-    name: "YouTube",
-    link: "https://youtube.com",
-    Icon: RiYoutubeLine,
-  },
-  {
-    name: "Instagram",
-    link: "https://instagram.com",
-    Icon: RiInstagramLine,
-  },
-  {
-    name: "Facebook",
-    link: "https://facebook.com",
-    Icon: RiFacebookLine,
-  },
-  {
-    name: "Dribbble",
-    link: "https://dribbble.com",
-    Icon: RiDribbbleLine,
-  },
-  {
-    name: "Pinterest",
-    link: "https://pinterest.com",
-    Icon: RiPinterestLine,
-  },
+
   {
     name: "Github",
-    link: "https://github.com/sanidhyy/modern-portfolio",
+    link: "https://github.com/sankha1545",
     Icon: RiGithubLine,
+  },
+  {
+    name: "linkedIn",
+    link: "https://www.linkedin.com/in/sankha-subhra-das-625ab6201/",
+    Icon: RiLinkedinBoxLine,
   },
 ];
 
 const Socials = () => {
   return (
-    <div className="flex items-center gap-x-5 text-lg">
+    <div className="flex items-center text-lg gap-x-5">
       {socialData.map((social, i) => (
         <Link
           key={i}
@@ -53,7 +31,7 @@ const Socials = () => {
           target="_blank"
           rel="noreferrer noopener"
           className={`${
-            social.name === "Github"
+            social.name === "Github" || "LinkedIn"
               ? "bg-accent rounded-full p-[5px] hover:text-white"
               : "hover:text-accent"
           } transition-all duration-300`}

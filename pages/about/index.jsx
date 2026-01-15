@@ -1,238 +1,331 @@
+"use client";
+
+import React, { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
-import { useState } from "react";
 import CountUp from "react-countup";
+import Avatar from "../../components/Avatar";
+
+import { FaHtml5, FaCss3, FaJs, FaReact, FaDocker, FaAws, FaNodeJs } from "react-icons/fa";
 import {
-  FaCss3,
-  FaFigma,
-  FaHtml5,
-  FaJs,
-  FaReact,
-  FaWordpress,
-} from "react-icons/fa";
-import {
-  SiAdobephotoshop,
-  SiAdobexd,
-  SiFramer,
   SiNextdotjs,
+  SiTailwindcss,
+  SiTypescript,
+  SiMongodb,
+  SiPostgresql,
+  SiMysql,
+  SiRedux,
+  SiNginx,
+  SiPrometheus,
+  SiGrafana,
+  SiGithubactions,
 } from "react-icons/si";
 
-import Avatar from "../../components/Avatar";
-import Circles from "../../components/Circles";
-import { fadeIn } from "../../variants";
-
-//  data
-export const aboutData = [
-  {
-    title: "skills",
-    info: [
-      {
-        title: "Web Development",
-        icons: [
-          FaHtml5,
-          FaCss3,
-          FaJs,
-          FaReact,
-          SiNextdotjs,
-          SiFramer,
-          FaWordpress,
-        ],
-      },
-      {
-        title: "UI/UX Design",
-        icons: [FaFigma, SiAdobexd, SiAdobephotoshop],
-      },
-    ],
-  },
-  {
-    title: "awards",
-    info: [
-      {
-        title: "Webby Awards - Honoree",
-        stage: "2011 - 2012",
-      },
-      {
-        title: "Adobe Design Achievement Awards - Finalist",
-        stage: "2009 - 2010",
-      },
-    ],
-  },
-  {
-    title: "experience",
-    info: [
-      {
-        title: "UX/UI Designer - XYZ Company",
-        stage: "2012 - 2023",
-      },
-      {
-        title: "Web Developer - ABC Agency",
-        stage: "2010 - 2012",
-      },
-      {
-        title: "Intern - DEF Corporation",
-        stage: "2008 - 2010",
-      },
-    ],
-  },
-  {
-    title: "credentials",
-    info: [
-      {
-        title: "Web Development - ABC University, LA, CA",
-        stage: "2011",
-      },
-      {
-        title: "Computer Science Diploma - AV Technical Institute",
-        stage: "2009",
-      },
-      {
-        title: "Certified Graphic Designer - ABC Institute, Los Angeles, CA",
-        stage: "2006",
-      },
-    ],
-  },
+/* ---------------- SKILLS (objects with metadata) ---------------- */
+const skills = [
+  { id: "html", name: "HTML5", Icon: FaHtml5, percent: 92 },
+  { id: "css", name: "CSS3", Icon: FaCss3, percent: 88 },
+  { id: "js", name: "JavaScript", Icon: FaJs, percent: 90 },
+  { id: "ts", name: "TypeScript", Icon: SiTypescript, percent: 86 },
+  { id: "react", name: "React", Icon: FaReact, percent: 90 },
+  { id: "next", name: "Next.js", Icon: SiNextdotjs, percent: 84 },
+  { id: "redux", name: "Redux", Icon: SiRedux, percent: 80 },
+  { id: "tailwind", name: "Tailwind", Icon: SiTailwindcss, percent: 87 },
+  { id: "node", name: "Node.js", Icon: FaNodeJs, percent: 85 },
+  { id: "mongo", name: "MongoDB", Icon: SiMongodb, percent: 78 },
+  { id: "pg", name: "Postgres", Icon: SiPostgresql, percent: 77 },
+  { id: "mysql", name: "MySQL", Icon: SiMysql, percent: 75 },
+  { id: "docker", name: "Docker", Icon: FaDocker, percent: 82 },
+  { id: "aws", name: "AWS", Icon: FaAws, percent: 80 },
+  { id: "gha", name: "GitHub Actions", Icon: SiGithubactions, percent: 76 },
+  { id: "nginx", name: "Nginx", Icon: SiNginx, percent: 70 },
+  { id: "prom", name: "Prometheus", Icon: SiPrometheus, percent: 68 },
+  { id: "graf", name: "Grafana", Icon: SiGrafana, percent: 69 },
 ];
 
+/* ---------------- VARIANTS ---------------- */
+const container = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.06 } },
+};
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 24 },
+  show: { opacity: 1, y: 0 },
+};
+
+const card3D = {
+  hidden: { opacity: 0, rotateX: -12, y: 28 },
+  show: { opacity: 1, rotateX: 0, y: 0 },
+};
+
+/* ---------------- COMPONENT ---------------- */
+
 const About = () => {
-  const [index, setIndex] = useState(0);
+  // refs & state for popover positioning (plain JS refs / state)
+  const containerRef = useRef(null);
+  const skillRefs = useRef({});
+  const [openIndex, setOpenIndex] = useState(null);
+  const [popoverPos, setPopoverPos] = useState(null);
+  const [hoverIndex, setHoverIndex] = useState(null);
+
+  // compute position of popover based on clicked skill
+  const positionPopover = (index) => {
+    const btn = skillRefs.current[index];
+    const container = containerRef.current;
+    if (!btn || !container) return setPopoverPos(null);
+    const btnRect = btn.getBoundingClientRect();
+    const contRect = container.getBoundingClientRect();
+
+    // Prefer placing above if there's space, else below.
+    const spaceAbove = btnRect.top - contRect.top;
+    const preferAbove = spaceAbove > 110;
+    const left = Math.min(
+      Math.max(btnRect.left - contRect.left + btnRect.width / 2 - 110, 8),
+      contRect.width - 220
+    );
+    const top = preferAbove ? btnRect.top - contRect.top - 120 : btnRect.top - contRect.top + btnRect.height + 12;
+
+    setPopoverPos({ left, top });
+  };
+
+  // toggle popover
+  const onToggle = (index) => {
+    if (openIndex === index) {
+      setOpenIndex(null);
+      setPopoverPos(null);
+    } else {
+      setOpenIndex(index);
+      requestAnimationFrame(() => positionPopover(index));
+    }
+  };
+
+  // close on outside click or Escape
+  useEffect(() => {
+    function handleDoc(e) {
+      const target = e.target;
+      if (!containerRef.current) return;
+      if (!containerRef.current.contains(target)) {
+        setOpenIndex(null);
+        setPopoverPos(null);
+      }
+    }
+    function handleKey(e) {
+      if (e.key === "Escape") {
+        setOpenIndex(null);
+        setPopoverPos(null);
+      }
+    }
+    document.addEventListener("mousedown", handleDoc);
+    document.addEventListener("keydown", handleKey);
+    return () => {
+      document.removeEventListener("mousedown", handleDoc);
+      document.removeEventListener("keydown", handleKey);
+    };
+  }, []);
+
+  // reposition popover on resize/scroll
+  useEffect(() => {
+    function onLayout() {
+      if (openIndex !== null) positionPopover(openIndex);
+    }
+    window.addEventListener("resize", onLayout);
+    window.addEventListener("scroll", onLayout, true);
+    return () => {
+      window.removeEventListener("resize", onLayout);
+      window.removeEventListener("scroll", onLayout, true);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [openIndex]);
 
   return (
-    <div className="h-full bg-primary/30 py-32 text-center xl:text-left">
-      <Circles />
+    <section className="relative flex items-center w-full min-h-screen px-6 overflow-visible text-white bg-black xl:px-20">
+      {/* subtle radial glow */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute left-1/4 top-8 w-[720px] h-[420px] blur-3xl opacity-20 bg-[radial-gradient(closest-side,rgba(56,189,248,0.18),transparent)]" />
+      </div>
 
-      {/* avatar img */}
-      <motion.div
-        variants={fadeIn("right", 0.2)}
-        initial="hidden"
-        animate="show"
-        exit="hidden"
-        className="hidden xl:flex absolute bottom-0 -left-[370px]"
-      >
-        <Avatar />
-      </motion.div>
+      <div ref={containerRef} className="relative w-full mx-auto max-w-7xl" style={{ perspective: 1200 }}>
+        {/* header */}
+        <motion.h2 variants={fadeUp} initial="hidden" animate="show" className="mb-3 text-3xl font-bold xl:text-4xl">
+          Full-Stack Engineer focused on
+          <span className="text-accent"> reliability & motion</span>
+        </motion.h2>
 
-      <div className="container mx-auto h-full flex flex-col items-center xl:flex-row gap-x-6">
-        {/* text */}
-        <div className="flex-1 flex flex-col justify-center">
-          <motion.h2
-            variants={fadeIn("right", 0.2)}
-            initial="hidden"
-            animate="show"
-            exit="hidden"
-            className="h2"
-          >
-            Captivating <span className="text-accent">stories</span> birth
-            magnificent designs.
-          </motion.h2>
-          <motion.p
-            variants={fadeIn("right", 0.4)}
-            initial="hidden"
-            animate="show"
-            className="max-w-[500px] mx-auto xl:mx-0 mb-6 xl:mb-12 px-2 xl:px-0"
-          >
-            10 years ago, I begin freelancing as a developer. Since then, I've
-            done remote work for agencies, consulted for startups, and
-            collabrated on digital products for business and consumer use.
-          </motion.p>
+        <motion.p variants={fadeUp} initial="hidden" animate="show" className="max-w-3xl mb-10 text-sm text-white/70 xl:text-base">
+          B.Tech (2025) full-stack developer with 1.5+ years of hands on experience building production-grade React & Node.js systems,
+          Dockerized deployments, CI/CD pipelines, AWS infrastructure, and observability-first platforms.
+        </motion.p>
 
-          {/* counters */}
+        {/* main grid */}
+        <div className="grid grid-cols-12 gap-12">
+          {/* LEFT */}
+          <div className="flex flex-col justify-between col-span-12 xl:col-span-4">
+            {/* Avatar */}
+            <motion.div
+              whileHover={{ rotateY: 10, rotateX: -6, scale: 1.04 }}
+              animate={{ y: [0, -10, 0] }}
+              transition={{ duration: 6, repeat: Infinity }}
+              className="flex justify-center"
+              style={{ transformStyle: "preserve-3d" }}
+            >
+              <Avatar />
+            </motion.div>
+
+            {/* stats */}
+            <motion.div variants={container} initial="hidden" animate="show" className="grid grid-cols-3 gap-4 mt-8">
+              {[
+                { label: "Years", value: 1.5 },
+                { label: "Projects", value: 10 },
+                { label: "Tech", value: skills.length },
+              ].map((item, i) => (
+                <motion.div
+                  key={i}
+                  variants={card3D}
+                  whileHover={{ y: -6, scale: 1.03 }}
+                  className="p-4 text-center border rounded-xl bg-white/5 backdrop-blur border-white/10"
+                >
+                  <div className="text-2xl font-bold text-accent">
+                    <CountUp end={item.value} decimals={item.value % 1 ? 1 : 0} />
+                  </div>
+                  <p className="text-xs tracking-wide uppercase text-white/60">{item.label}</p>
+                </motion.div>
+              ))}
+            </motion.div>
+          </div>
+
+          {/* RIGHT */}
+          <div className="flex flex-col justify-between col-span-12 xl:col-span-8">
+            {/* SKILLS */}
+            <motion.div variants={container} initial="hidden" animate="show">
+              <h4 className="mb-4 text-sm tracking-wide uppercase text-white/60">Core Skills</h4>
+
+              <div className="grid grid-cols-6 gap-4 sm:grid-cols-9">
+                {skills.map((skill, i) => {
+                  const Icon = skill.Icon;
+                  return (
+                    <motion.button
+                      key={skill.id}
+                      ref={(el) => (skillRefs.current[i] = el)}
+                      variants={fadeUp}
+                      whileHover={{ rotateY: 12, rotateX: -10, scale: 1.12, boxShadow: "0 6px 28px rgba(56,189,248,0.16)" }}
+                      onMouseEnter={() => setHoverIndex(i)}
+                      onMouseLeave={() => setHoverIndex((prev) => (prev === i ? null : prev))}
+                      onClick={() => onToggle(i)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          e.preventDefault();
+                          onToggle(i);
+                        }
+                      }}
+                      aria-expanded={openIndex === i}
+                      aria-label={`${skill.name} skill — ${skill.percent}% proficiency`}
+                      className="relative flex items-center justify-center p-4 border rounded-lg bg-white/5 backdrop-blur border-white/10 focus:outline-none"
+                      style={{ transformStyle: "preserve-3d" }}
+                    >
+                      <Icon className="text-xl text-accent" />
+                      {/* small hover tooltip (quick preview) */}
+                      {hoverIndex === i && openIndex !== i && (
+                        <motion.div
+                          initial={{ opacity: 0, y: 6 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: 6 }}
+                          className="absolute px-2 py-1 text-xs transform -translate-x-1/2 border rounded-md pointer-events-none -top-10 left-1/2 whitespace-nowrap bg-black/80 text-white/90 border-white/5"
+                        >
+                          {skill.name} — {skill.percent}%
+                        </motion.div>
+                      )}
+                    </motion.button>
+                  );
+                })}
+              </div>
+            </motion.div>
+
+            {/* INFO CARDS */}
+            <motion.div variants={container} initial="hidden" animate="show" className="grid grid-cols-1 gap-6 mt-10 md:grid-cols-3">
+              {[
+                {
+                  title: "Experience",
+                  text: "Front-End Developer Intern — Alien Brains. Built modular React systems, motion-driven UI, accessibility-safe components, and resilient APIs.",
+                },
+                {
+                  title: "Projects",
+                  text: "MedicoX · SignalHub · BhaktaSanmilani. Production platforms with RBAC, payments, real-time systems, and observability.",
+                },
+                {
+                  title: "Education",
+                  text: "B.Tech Computer Science — UEM Kolkata (2021–2025)",
+                },
+              ].map((card, i) => (
+                <motion.div key={i} variants={card3D} whileHover={{ y: -10, rotateX: 6 }} className="p-6 border rounded-2xl bg-white/5 backdrop-blur border-white/10">
+                  <h5 className="mb-2 text-sm font-semibold text-accent">{card.title}</h5>
+                  <p className="text-xs leading-relaxed text-white/70">{card.text}</p>
+                </motion.div>
+              ))}
+            </motion.div>
+          </div>
+        </div>
+
+        {/* POPUP: persistent when clicking a skill */}
+        {openIndex !== null && popoverPos && (
           <motion.div
-            variants={fadeIn("right", 0.6)}
-            initial="hidden"
-            animate="show"
-            className="hidden md:flex md:max-w-xl xl:max-w-none mx-auto xl:mx-0 mb-8"
+            role="dialog"
+            aria-modal="false"
+            initial={{ opacity: 0, y: 8, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 8, scale: 0.98 }}
+            transition={{ type: "spring", stiffness: 400, damping: 28 }}
+            style={{
+              position: "absolute",
+              left: popoverPos.left,
+              top: popoverPos.top,
+              width: 220,
+              zIndex: 60,
+            }}
+            className="p-4 border shadow-2xl rounded-xl bg-gradient-to-br from-black/90 to-white/5 border-white/10"
           >
-            <div className="flex flex-1 xl:gap-x-6">
-              {/* experience */}
-              <div className="relative flex-1 after:w-[1px] after:h-full after:bg-white/10 after:absolute after:top-0 after:right-0">
-                <div className="text-2xl xl:text-4xl font-extrabold text-accent mb-2">
-                  <CountUp start={0} end={10} duration={5} />
-                </div>
-                <div className="text-xs uppercase tracking-[1px] leading-[1.4] max-w-[100px]">
-                  Years of experience.
-                </div>
+            <div className="flex items-start gap-3">
+              <div className="flex-shrink-0">
+                {/* large icon */}
+                {(() => {
+                  const Icon = skills[openIndex].Icon;
+                  return <Icon className="text-2xl text-accent" />;
+                })()}
               </div>
+              <div className="min-w-0">
+                <div className="flex items-center justify-between">
+                  <div className="text-sm font-semibold">{skills[openIndex].name}</div>
+                  <div className="text-xs text-white/60">Proficiency</div>
+                </div>
 
-              {/* clients */}
-              <div className="relative flex-1 after:w-[1px] after:h-full after:bg-white/10 after:absolute after:top-0 after:right-0">
-                <div className="text-2xl xl:text-4xl font-extrabold text-accent mb-2">
-                  <CountUp start={0} end={250} duration={5} />
+                {/* animated percentage */}
+                <div className="mt-2 text-sm font-bold">
+                  <CountUp end={skills[openIndex].percent} duration={1.2} suffix="%" />
                 </div>
-                <div className="text-xs uppercase tracking-[1px] leading-[1.4] max-w-[100px]">
-                  Satisfied clients.
-                </div>
-              </div>
 
-              {/* projects */}
-              <div className="relative flex-1 after:w-[1px] after:h-full after:bg-white/10 after:absolute after:top-0 after:right-0">
-                <div className="text-2xl xl:text-4xl font-extrabold text-accent mb-2">
-                  <CountUp start={0} end={650} duration={5} />
+                {/* progress bar */}
+                <div className="w-full h-2 mt-3 overflow-hidden rounded-full bg-white/5">
+                  <motion.div
+                    initial={{ width: 0 }}
+                    animate={{ width: `${skills[openIndex].percent}%` }}
+                    transition={{ duration: 1.2, ease: "easeOut" }}
+                    className="h-2 rounded-full"
+                    style={{
+                      background: "linear-gradient(90deg,#38bdf8,#7c3aed)",
+                      boxShadow: "0 6px 18px rgba(56,189,248,0.16)",
+                    }}
+                  />
                 </div>
-                <div className="text-xs uppercase tracking-[1px] leading-[1.4] max-w-[100px]">
-                  Finished projects.
-                </div>
-              </div>
 
-              {/* awards */}
-              <div className="relative flex-1">
-                <div className="text-2xl xl:text-4xl font-extrabold text-accent mb-2">
-                  <CountUp start={0} end={8} duration={5} />
-                </div>
-                <div className="text-xs uppercase tracking-[1px] leading-[1.4] max-w-[100px]">
-                  Winning awards.
+                {/* short description (optional) */}
+                <div className="mt-2 text-xs text-white/60">
+                  {skills[openIndex].name} — comfortable building production features, components, and integrations.
                 </div>
               </div>
             </div>
           </motion.div>
-        </div>
-
-        {/* info */}
-        <motion.div
-          variants={fadeIn("left", 0.4)}
-          initial="hidden"
-          animate="show"
-          exit="hidden"
-          className="flex flex-col w-full xl:max-w-[48%] h-[480px]"
-        >
-          <div className="flex gap-x-4 xl:gap-x-8 mx-auto xl:mx-0 mb-4">
-            {aboutData.map((item, itemI) => (
-              <div
-                key={itemI}
-                className={`${
-                  index === itemI &&
-                  "text-accent after:w-[100%] after:bg-accent after:transition-all after:duration-300"
-                } cursor-pointer capitalize xl:text-lg relative after:w-8 after:h-[2px] after:bg-white after:absolute after:-bottom-1 after:left-0`}
-                onClick={() => setIndex(itemI)}
-              >
-                {item.title}
-              </div>
-            ))}
-          </div>
-
-          <div className="py-2 xl:py-6 flex flex-col gap-y-2 xl:gap-y-4 items-center xl:items-start">
-            {aboutData[index].info.map((item, itemI) => (
-              <div
-                key={itemI}
-                className="flex-1 flex flex-col md:flex-row max-w-max gap-x-2 items-center text-center text-white/60"
-              >
-                {/* title */}
-                <div className="font-light mb-2 md:mb-0">{item.title}</div>
-                <div className="hidden md:flex">-</div>
-                <div>{item.stage}</div>
-
-                <div className="flex gap-x-4">
-                  {/* icons */}
-                  {item.icons?.map((Icon, iconI) => (
-                    <div key={iconI} className="text-2xl text-white">
-                      <Icon />
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-        </motion.div>
+        )}
       </div>
-    </div>
+    </section>
   );
 };
 

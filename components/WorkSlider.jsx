@@ -13,23 +13,23 @@ const workSlides = {
     {
       images: [
         {
-          title: "title",
-          path: "/thumb1.jpg",
-          link: "http://example.com",
+          title: "My Portfolio",
+          path: "/work (1).png",
+          link: "https://myportfolioxyx.netlify.app/",
+        },
+        {
+          title: "MedicoX",
+          path: "/work (7).png",
+          link: "https://medicox123.netlify.app/",
+        },
+        {
+          title: "Bardhaman BhaktaSanmilani",
+          path: "/work (3).png",
+          link: "https://bardhaman.bhaktasanmilani.org/",
         },
         {
           title: "title",
-          path: "/thumb2.jpg",
-          link: "http://example.com",
-        },
-        {
-          title: "title",
-          path: "/thumb3.jpg",
-          link: "http://example.com",
-        },
-        {
-          title: "title",
-          path: "/thumb4.jpg",
+          path: "/work (4).webp",
           link: "http://example.com",
         },
       ],
@@ -76,10 +76,10 @@ const WorkSlider = () => {
           <div className="grid grid-cols-2 grid-rows-2 gap-4">
             {slide.images.map((image, imageI) => (
               <div
-                className="relative rounded-lg overflow-hidden flex items-center justify-center group"
+                className="relative flex items-center justify-center overflow-hidden rounded-lg group"
                 key={imageI}
               >
-                <div className="flex items-center justify-center relative overflow-hidden group">
+                <div className="relative flex items-center justify-center overflow-hidden group">
                   {/* image */}
                   <Image
                     src={image.path}
@@ -95,7 +95,7 @@ const WorkSlider = () => {
                   />
 
                   {/* title */}
-                  <div className="absolute bottom-0 translate-y-full group-hover:-translate-y-10 group-hover:xl:-translate-y-20 transition-all duration-300">
+                  <div className="absolute bottom-0 transition-all duration-300 translate-y-full group-hover:-translate-y-10 group-hover:xl:-translate-y-20">
                     <Link
                       href={image.link}
                       target="_blank"

@@ -50,16 +50,21 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@next/font": "^13.4.4",
+    "@react-three/drei": "^9.88.13",
+    "@react-three/fiber": "^8.15.19",
+    "@splinetool/react-spline": "^4.1.0",
     "framer-motion": "^10.12.16",
+    "gsap": "^3.14.2",
     "next": "14.2.35",
+    "nodemailer": "^7.0.12",
     "react": "18.2.0",
-    "react-countup": "^6.4.2",
+    "react-countup": "^6.5.3",
     "react-dom": "18.2.0",
     "react-icons": "^4.8.0",
     "react-tsparticles": "^2.9.3",
     "swiper": "^9.4.0",
     "tailwind-scrollbar": "^3.0.4",
+    "three": "^0.160.0",
     "tsparticles": "^2.9.3"
   },
   "devDependencies": {

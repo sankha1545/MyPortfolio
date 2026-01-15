@@ -1,11 +1,15 @@
+"use client";
+
 import { Sora } from "next/font/google";
 import Head from "next/head";
+import { motion, useScroll, useMotionValueEvent } from "framer-motion";
+import { useEffect } from "react";
 
 import Header from "../components/Header";
 import Nav from "../components/Nav";
 import TopLeftImg from "../components/TopLeftImg";
 
-// setup font
+/* ---------- FONT SETUP ---------- */
 const sora = Sora({
   subsets: ["latin"],
   variable: "--font-sora",
@@ -13,32 +17,50 @@ const sora = Sora({
 });
 
 const Layout = ({ children }) => {
+  const { scrollYProgress } = useScroll();
+
+  /* ---------------------------------------------
+     Drive CSS variables from scroll (for scrollbar)
+  ---------------------------------------------- */
+  useMotionValueEvent(scrollYProgress, "change", (v) => {
+    document.documentElement.style.setProperty(
+      "--scroll-progress",
+      v.toString()
+    );
+  });
+
   return (
-    <main
-      className={`page bg-site text-white bg-cover bg-no-repeat ${sora.variable} font-sora relative`}
-    >
-      {/* metadata */}
+    <>
+      {/* ---------- METADATA ---------- */}
       <Head>
-        <title>Ethan Smith | Portfolio</title>
+        <title>Sankha Subhra Das | Portfolio</title>
         <meta
           name="description"
-          content="Ethan Smith is a Full-stack web developer with 10+ years of experience."
+          content="Sankha Subhra Das is a Full-stack web developer with 1.5+ years of hands-on experience."
         />
-        <meta
-          name="keywords"
-          content="react, next, nextjs, html, css, javascript, js, modern-ui, modern-ux, portfolio, framer-motion, 3d-website, particle-effect"
-        />
-        <meta name="author" content="Sanidhya Kumar Verma" />
-        <meta name="theme-color" content="#f13024" />
+        <meta name="author" content="Sankha Subhra Das" />
+        <meta name="theme-color" content="#000000" />
       </Head>
 
+      {/* ---------- FIXED UI ---------- */}
       <TopLeftImg />
-      <Nav />
       <Header />
+      <Nav />
 
-      {/* main content */}
-      {children}
-    </main>
+      {/* ---------- MAIN PAGE FLOW ---------- */}
+      <main
+        className={`
+          ${sora.variable} font-sora
+          bg-black text-white
+          min-h-screen overflow-x-hidden
+          pt-[90px]      /* header space */
+          pb-[110px]     /* bottom nav space */
+          scrollbar-3d   /* custom class */
+        `}
+      >
+        {children}
+      </main>
+    </>
   );
 };
 
