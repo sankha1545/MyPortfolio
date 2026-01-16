@@ -168,7 +168,7 @@ export default function Home() {
               <ProjectsBtn />
 
               <motion.a
-                href="/resume.pdf"
+                href="/Sankha-Subhra-Das.pdf"
                 download
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}

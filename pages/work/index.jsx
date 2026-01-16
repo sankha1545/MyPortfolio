@@ -49,22 +49,21 @@ const staticProjects = [
     stack: ["React", "Three.js", "Framer Motion"],
     priority: "static",
   },
-  {
-    title: "Real-Time Chat App",
-    subtitle: "Socket-based Messaging",
-    description:
-      "WebSocket-powered real-time chat application with authentication and message persistence.",
-    stack: ["React", "Node.js", "Socket.IO"],
-    priority: "static",
-  },
-  {
-    title: "CI/CD Pipeline Demo",
-    subtitle: "DevOps Project",
-    description:
-      "Dockerized app with GitHub Actions CI pipeline and AWS EC2 deployment.",
-    stack: ["Docker", "GitHub Actions", "AWS"],
-    priority: "static",
-  },
+{
+  title: "SignalHub",
+  subtitle: "Unified Multi-Channel Customer Outreach",
+  description:
+    "Unified inbox platform aggregating SMS, WhatsApp, Email, and Web Chat into per-contact conversation threads with scheduling, team collaboration, and analytics.",
+  stack: [
+    "Next.js",
+    "TypeScript",
+    "PostgreSQL",
+    "Prisma",
+    "Twilio",
+    "SMTP",
+  ],
+  priority: "static",
+},
 ];
 
 /* ---------------- ANIMATION VARIANTS ---------------- */
