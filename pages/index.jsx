@@ -1,8 +1,14 @@
 "use client";
 
-import React, { useEffect, useRef, useState, Suspense } from "react";
+import React, {
+  useEffect,
+  useRef,
+  useState,
+  Suspense,
+  useCallback,
+} from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Canvas } from "@react-three/fiber";
+import { Canvas, useFrame } from "@react-three/fiber";
 import {
   OrbitControls,
   useGLTF,
@@ -37,35 +43,48 @@ const SUBTITLES = [
 /*                                3D AVATAR                                   */
 /* -------------------------------------------------------------------------- */
 
-function Avatar3D() {
-  const group = useRef(null);
-  const { scene, animations } = useGLTF("/3Dmodel.glb");
+function Avatar3D({
+  modelPath = "/3Dmodel.glb",
+  scale = 1.55,
+  position = [0, -0.35, 0],
+  rotationSpeed = 0.8,
+}) {
+  const group = useRef();
+  const { scene, animations } = useGLTF(modelPath);
   const { actions } = useAnimations(animations, group);
 
-  // Play embedded GLB animations ONLY (no artificial motion)
   useEffect(() => {
     if (!actions) return;
-
     Object.values(actions).forEach((action) => {
-      if (!action) return;
-      action.reset();
-      action.setLoop(THREE.LoopRepeat, Infinity);
-      action.play();
+      try {
+        action.reset();
+        action.setLoop(THREE.LoopRepeat, Infinity);
+        action.timeScale = 1.2;
+        action.play();
+      } catch {}
     });
-
     return () => {
       Object.values(actions).forEach((action) => {
-        if (action) action.stop();
+        try {
+          action.stop();
+        } catch {}
       });
     };
   }, [actions]);
 
+  useFrame((_, delta) => {
+    if (!group.current) return;
+    group.current.rotation.y += delta * rotationSpeed;
+  });
+
   return (
-    <group ref={group} position={[0, -0.3, 0]} scale={1.6} dispose={null}>
+    <group ref={group} position={position} scale={scale}>
       <primitive object={scene} />
     </group>
   );
 }
+
+useGLTF.preload("/3Dmodel.glb");
 
 /* -------------------------------------------------------------------------- */
 /*                                PAGE                                        */
@@ -73,12 +92,21 @@ function Avatar3D() {
 
 export default function Home() {
   const [index, setIndex] = useState(0);
+  const controlsRef = useRef(null);
 
   useEffect(() => {
     const interval = setInterval(() => {
       setIndex((i) => (i + 1) % TITLES.length);
-    }, 5000);
+    }, 4000);
     return () => clearInterval(interval);
+  }, []);
+
+  const handlePointerOver = useCallback(() => {
+    document.body.style.cursor = "grab";
+  }, []);
+
+  const handlePointerOut = useCallback(() => {
+    document.body.style.cursor = "default";
   }, []);
 
   return (
@@ -120,56 +148,60 @@ export default function Home() {
             </AnimatePresence>
           </div>
 
+          {/* CTA BUTTONS */}
           <motion.div
             variants={fadeIn("down", 0.4)}
             initial="hidden"
             animate="show"
-            className="flex justify-center xl:justify-start"
+            className="flex flex-col gap-4 sm:flex-row sm:items-center"
           >
             <ProjectsBtn />
+
+            {/* DOWNLOAD RESUME */}
+            <motion.a
+              href="/resume.pdf"
+              download
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="inline-flex items-center justify-center px-8 py-3 font-medium text-white transition-colors border rounded-full  border-white/20 backdrop-blur-sm hover:bg-white/10"
+              aria-label="Download Resume"
+            >
+              Download Resume
+            </motion.a>
           </motion.div>
         </div>
       </div>
 
       {/* RIGHT 3D SCENE */}
       <div className="absolute inset-y-0 right-0 w-full xl:w-[55%]">
-        {/* 1) Particles layer: underneath canvas, non-interactive */}
+        {/* Particles */}
         <div
           className="absolute inset-0"
           style={{ zIndex: 0, pointerEvents: "none" }}
-          aria-hidden="true"
         >
           <ParticlesContainer />
         </div>
 
-        {/* 2) Canvas wrapper: above particles, receives pointer events */}
+        {/* Canvas */}
         <div
           className="absolute inset-0"
-          style={{ zIndex: 10, pointerEvents: "auto" }}
+          style={{ zIndex: 10 }}
+          onPointerOver={handlePointerOver}
+          onPointerOut={handlePointerOut}
         >
           <Canvas
-            className="w-full h-full"
-            camera={{ position: [0, 0.6, 4.5], fov: 36 }}
+            camera={{ position: [0, 0.8, 4.2], fov: 34 }}
             shadows
             dpr={[1, 2]}
-            onCreated={({ gl }) => {
-              // ensure canvas accepts pointer gestures for OrbitControls
-              try {
-                gl.domElement.style.touchAction = "none"; // prevents page scroll on touch drag
-                // DEBUG: uncomment to verify pointer events reach the canvas
-                // gl.domElement.addEventListener("pointerdown", () => console.log("canvas pointerdown"));
-              } catch (e) {}
-            }}
             gl={{ antialias: true }}
           >
-            {/* LIGHTING */}
-            <ambientLight intensity={0.4} />
+            <ambientLight intensity={0.5} />
             <directionalLight
-              position={[5, 8, 2]}
-              intensity={1.3}
+              position={[6, 10, 3]}
+              intensity={1.6}
               castShadow
             />
-            <spotLight position={[-6, 4, -2]} intensity={0.9} />
+            <spotLight position={[-8, 6, -3]} intensity={0.9} />
 
             <Environment preset="studio" />
 
@@ -185,17 +217,18 @@ export default function Home() {
                 position={[0, -1.6, 0]}
                 opacity={0.6}
                 blur={2}
+                far={3}
               />
             </Suspense>
 
             <OrbitControls
+              ref={controlsRef}
               enableRotate
               enableZoom={false}
               enablePan={false}
-              autoRotate={false}
-              rotateSpeed={0.9}
-              minPolarAngle={Math.PI / 2.8}
-              maxPolarAngle={Math.PI / 1.6}
+              dampingFactor={0.08}
+              enableDamping
+              rotateSpeed={0.6}
             />
           </Canvas>
         </div>
