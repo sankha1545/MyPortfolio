@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import CountUp from "react-countup";
 import Avatar from "../../components/Avatar";
+import SEO from "../../components/SEO";
 
 import {
   FaHtml5,
@@ -76,7 +77,7 @@ const About = () => {
   const [openIndex, setOpenIndex] = useState(null);
   const [popoverPos, setPopoverPos] = useState(null);
 
-  /* ---------- Popover positioning (responsive) ---------- */
+  /* ---------- Popover positioning ---------- */
   const positionPopover = (index) => {
     const btn = skillRefs.current[index];
     const container = containerRef.current;
@@ -86,7 +87,6 @@ const About = () => {
     const contRect = container.getBoundingClientRect();
     const viewportW = window.innerWidth;
 
-    // Mobile: center popover
     if (viewportW < 640) {
       setPopoverPos({
         left: contRect.width / 2 - 120,
@@ -128,166 +128,172 @@ const About = () => {
   }, []);
 
   return (
-    <section className="relative w-full min-h-screen px-4 py-16 text-white bg-black sm:px-8 xl:px-20">
-      <div
-        ref={containerRef}
-        className="relative mx-auto max-w-7xl"
-      >
-        {/* HEADER */}
-        <motion.h2
-          variants={fadeUp}
-          initial="hidden"
-          animate="show"
-          className="text-2xl font-bold sm:text-3xl xl:text-4xl"
-        >
-          Full-Stack Engineer focused on
-          <span className="text-accent"> reliability & motion</span>
-        </motion.h2>
+    <>
+      {/* ===================== SEO ===================== */}
+      <SEO
+        title="About | Sankha Subhra Das"
+        description="Learn more about Sankha Subhra Das, a full-stack developer experienced in React, Next.js, Node.js, DevOps, cloud infrastructure, and production-grade systems."
+        url="https://www.sankhasubhradasportfolio.in/about"
+      />
 
-        <motion.p
-          variants={fadeUp}
-          initial="hidden"
-          animate="show"
-          className="max-w-3xl mt-4 text-sm leading-relaxed text-white/70 sm:text-base"
-        >
-          B.Tech (2025) full-stack developer with hands-on experience building
-          production-grade systems using React, Node.js, Docker, CI/CD, AWS,
-          and observability tooling.
-        </motion.p>
+      <section className="relative w-full min-h-screen px-4 py-16 text-white bg-black sm:px-8 xl:px-20">
+        <div ref={containerRef} className="relative mx-auto max-w-7xl">
+          {/* HEADER */}
+          <motion.h2
+            variants={fadeUp}
+            initial="hidden"
+            animate="show"
+            className="text-2xl font-bold sm:text-3xl xl:text-4xl"
+          >
+            Full-Stack Engineer focused on
+            <span className="text-accent"> reliability & motion</span>
+          </motion.h2>
 
-        {/* MAIN GRID */}
-        <div className="grid gap-12 mt-16 xl:grid-cols-12">
-          {/* LEFT */}
-          <div className="flex flex-col items-center gap-10 xl:col-span-4">
-            <motion.div
-              animate={{ y: [0, -8, 0] }}
-              transition={{ duration: 6, repeat: Infinity }}
-              className="w-full max-w-xs"
-            >
-              <Avatar />
-            </motion.div>
+          <motion.p
+            variants={fadeUp}
+            initial="hidden"
+            animate="show"
+            className="max-w-3xl mt-4 text-sm leading-relaxed text-white/70 sm:text-base"
+          >
+            B.Tech (2025) full-stack developer with hands-on experience building
+            production-grade systems using React, Node.js, Docker, CI/CD, AWS,
+            and observability tooling.
+          </motion.p>
 
-            {/* STATS */}
-            <div className="grid w-full grid-cols-3 gap-4">
-              {[
-                { label: "Years", value: 1.5 },
-                { label: "Projects", value: 10 },
-                { label: "Tech", value: skills.length },
-              ].map((item, i) => (
-                <motion.div
-                  key={i}
-                  variants={card3D}
-                  initial="hidden"
-                  animate="show"
-                  className="p-4 text-center border rounded-xl bg-white/5 border-white/10"
-                >
-                  <div className="text-2xl font-bold text-accent">
-                    <CountUp end={item.value} decimals={item.value % 1 ? 1 : 0} />
-                  </div>
-                  <p className="mt-1 text-xs uppercase text-white/60">
-                    {item.label}
-                  </p>
-                </motion.div>
-              ))}
+          {/* MAIN GRID */}
+          <div className="grid gap-12 mt-16 xl:grid-cols-12">
+            {/* LEFT */}
+            <div className="flex flex-col items-center gap-10 xl:col-span-4">
+              <motion.div
+                animate={{ y: [0, -8, 0] }}
+                transition={{ duration: 6, repeat: Infinity }}
+                className="w-full max-w-xs"
+              >
+                <Avatar />
+              </motion.div>
+
+              {/* STATS */}
+              <div className="grid w-full grid-cols-3 gap-4">
+                {[
+                  { label: "Years", value: 1.5 },
+                  { label: "Projects", value: 10 },
+                  { label: "Tech", value: skills.length },
+                ].map((item, i) => (
+                  <motion.div
+                    key={i}
+                    variants={card3D}
+                    initial="hidden"
+                    animate="show"
+                    className="p-4 text-center border rounded-xl bg-white/5 border-white/10"
+                  >
+                    <div className="text-2xl font-bold text-accent">
+                      <CountUp end={item.value} decimals={item.value % 1 ? 1 : 0} />
+                    </div>
+                    <p className="mt-1 text-xs uppercase text-white/60">
+                      {item.label}
+                    </p>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+
+            {/* RIGHT */}
+            <div className="xl:col-span-8">
+              {/* SKILLS */}
+              <motion.div variants={container} initial="hidden" animate="show">
+                <h4 className="mb-4 text-sm tracking-wide uppercase text-white/60">
+                  Core Skills
+                </h4>
+
+                <div className="grid grid-cols-4 gap-3 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-9">
+                  {skills.map((skill, i) => {
+                    const Icon = skill.Icon;
+                    return (
+                      <motion.button
+                        key={skill.id}
+                        ref={(el) => (skillRefs.current[i] = el)}
+                        variants={fadeUp}
+                        whileHover={{ scale: 1.1 }}
+                        onClick={() => togglePopover(i)}
+                        className="flex items-center justify-center p-3 border rounded-lg bg-white/5 border-white/10"
+                      >
+                        <Icon className="text-lg text-accent" />
+                      </motion.button>
+                    );
+                  })}
+                </div>
+              </motion.div>
+
+              {/* INFO CARDS */}
+              <div className="grid gap-6 mt-12 sm:grid-cols-2 lg:grid-cols-3">
+                {[
+                  {
+                    title: "Experience",
+                    text: "Frontend Developer Intern — Alien Brains. Built modular React systems and motion-driven UI.",
+                  },
+                  {
+                    title: "Projects",
+                    text: "MedicoX · SignalHub · BhaktaSanmilani — production platforms with payments, RBAC & real-time systems.",
+                  },
+                  {
+                    title: "Education",
+                    text: "B.Tech Computer Science — UEM Kolkata (2021–2025)",
+                  },
+                ].map((card, i) => (
+                  <motion.div
+                    key={i}
+                    variants={card3D}
+                    initial="hidden"
+                    animate="show"
+                    className="p-6 border rounded-2xl bg-white/5 border-white/10"
+                  >
+                    <h5 className="mb-2 text-sm font-semibold text-accent">
+                      {card.title}
+                    </h5>
+                    <p className="text-xs leading-relaxed text-white/70">
+                      {card.text}
+                    </p>
+                  </motion.div>
+                ))}
+              </div>
             </div>
           </div>
 
-          {/* RIGHT */}
-          <div className="xl:col-span-8">
-            {/* SKILLS GRID */}
-            <motion.div variants={container} initial="hidden" animate="show">
-              <h4 className="mb-4 text-sm tracking-wide uppercase text-white/60">
-                Core Skills
-              </h4>
-
-              <div className="grid grid-cols-4 gap-3 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-9">
-                {skills.map((skill, i) => {
-                  const Icon = skill.Icon;
-                  return (
-                    <motion.button
-                      key={skill.id}
-                      ref={(el) => (skillRefs.current[i] = el)}
-                      variants={fadeUp}
-                      whileHover={{ scale: 1.1 }}
-                      onClick={() => togglePopover(i)}
-                      className="flex items-center justify-center p-3 border rounded-lg bg-white/5 border-white/10"
-                    >
-                      <Icon className="text-lg text-accent" />
-                    </motion.button>
-                  );
-                })}
+          {/* POPOVER */}
+          {openIndex !== null && popoverPos && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.96 }}
+              animate={{ opacity: 1, scale: 1 }}
+              style={{
+                position: "absolute",
+                left: popoverPos.left,
+                top: popoverPos.top,
+                width: 220,
+                zIndex: 50,
+              }}
+              className="p-4 border rounded-xl bg-black/90 border-white/10"
+            >
+              <div className="text-sm font-semibold">
+                {skills[openIndex].name}
+              </div>
+              <div className="mt-2 text-sm font-bold text-accent">
+                <CountUp end={skills[openIndex].percent} suffix="%" />
+              </div>
+              <div className="w-full h-2 mt-3 rounded-full bg-white/10">
+                <div
+                  className="h-2 rounded-full"
+                  style={{
+                    width: `${skills[openIndex].percent}%`,
+                    background:
+                      "linear-gradient(90deg,#38bdf8,#7c3aed)",
+                  }}
+                />
               </div>
             </motion.div>
-
-            {/* INFO CARDS */}
-            <div className="grid gap-6 mt-12 sm:grid-cols-2 lg:grid-cols-3">
-              {[
-                {
-                  title: "Experience",
-                  text: "Frontend Developer Intern — Alien Brains. Built modular React systems and motion-driven UI.",
-                },
-                {
-                  title: "Projects",
-                  text: "MedicoX · SignalHub · BhaktaSanmilani — production platforms with payments, RBAC & real-time systems.",
-                },
-                {
-                  title: "Education",
-                  text: "B.Tech Computer Science — UEM Kolkata (2021–2025)",
-                },
-              ].map((card, i) => (
-                <motion.div
-                  key={i}
-                  variants={card3D}
-                  initial="hidden"
-                  animate="show"
-                  className="p-6 border rounded-2xl bg-white/5 border-white/10"
-                >
-                  <h5 className="mb-2 text-sm font-semibold text-accent">
-                    {card.title}
-                  </h5>
-                  <p className="text-xs leading-relaxed text-white/70">
-                    {card.text}
-                  </p>
-                </motion.div>
-              ))}
-            </div>
-          </div>
+          )}
         </div>
-
-        {/* SKILL POPOVER */}
-        {openIndex !== null && popoverPos && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.96 }}
-            animate={{ opacity: 1, scale: 1 }}
-            style={{
-              position: "absolute",
-              left: popoverPos.left,
-              top: popoverPos.top,
-              width: 220,
-              zIndex: 50,
-            }}
-            className="p-4 border rounded-xl bg-black/90 border-white/10"
-          >
-            <div className="text-sm font-semibold">
-              {skills[openIndex].name}
-            </div>
-            <div className="mt-2 text-sm font-bold text-accent">
-              <CountUp end={skills[openIndex].percent} suffix="%" />
-            </div>
-            <div className="w-full h-2 mt-3 rounded-full bg-white/10">
-              <div
-                className="h-2 rounded-full"
-                style={{
-                  width: `${skills[openIndex].percent}%`,
-                  background:
-                    "linear-gradient(90deg,#38bdf8,#7c3aed)",
-                }}
-              />
-            </div>
-          </motion.div>
-        )}
-      </div>
-    </section>
+      </section>
+    </>
   );
 };
 
