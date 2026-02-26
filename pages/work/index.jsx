@@ -32,18 +32,19 @@ const featuredProjects = [
     link: "https://bardhaman.bhaktasanmilani.org/",
     github:"https://github.com/bardhamanbhaktasanmilani/Bhaktasanmilani",
   },
+     {
+  title: "Papery",
+  subtitle: "Research Paper Tracking SaaS",
+  description:
+    "Full-stack SaaS platform for tracking, filtering, and analyzing research papers with authentication and analytics dashboard.",
+  stack: ["React", "Node.js", "PostgreSQL", "Prisma"],
+  status: "Live",
+  path: "/work (8).webp", // replace with your actual image file name
+  link: "https://papery-xi.vercel.app/",
+  github: "https://github.com/sankha1545/Papery",
+},
 
-  {
-    title: "My Portfolio",
-    subtitle: "Personal Portfolio",
-    description:
-      "Modern animated portfolio built with Next.js and Tailwind.",
-    stack: ["Next.js", "Tailwind"],
-    status: "Live",
-    path: "/work (1).png",
-    link: "https://myportfolioxyx.netlify.app/",
-    github: "https://github.com/sankha1545/full-stack_developerPortfolio",
-  },
+
 
   {
     title: "MedicoX",
@@ -67,6 +68,17 @@ const featuredProjects = [
     path: "/work (5).png",
     link: "http://localhost:5173/dashboard",
     github:  "",
+  },
+  {
+    title: "My Portfolio",
+    subtitle: "Personal Portfolio",
+    description:
+      "Modern animated portfolio built with Next.js and Tailwind.",
+    stack: ["Next.js", "Tailwind"],
+    status: "Live",
+    path: "/work (1).png",
+    link: "https://myportfolioxyx.netlify.app/",
+    github: "https://github.com/sankha1545/full-stack_developerPortfolio",
   },
 ];
 
