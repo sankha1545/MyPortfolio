@@ -40,7 +40,7 @@ const featuredProjects = [
   stack: ["React", "Node.js", "PostgreSQL", "Prisma"],
   status: "Live",
   path: "/work (8).webp", // replace with your actual image file name
-  link: "https://papery-xi.vercel.app/",
+  link: "https://papery-pied.vercel.app/",
   github: "https://github.com/sankha1545/Papery",
 },
 
